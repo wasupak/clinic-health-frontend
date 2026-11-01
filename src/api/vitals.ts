@@ -11,6 +11,32 @@ export interface CreateVitalRecordInput {
   otherSymptoms?: string;
 }
 
+export interface VitalRecord {
+  id: number;
+  patientHn: string;
+  recordedAt: string;
+  weightKg: number | string | null;
+  systolic: number | null;
+  diastolic: number | null;
+  pulseBpm: number | null;
+  fluidIntakeMl: number | string | null;
+  urineOutputMl: number | string | null;
+  shortnessOfBreath: boolean | null;
+  chestPain: boolean | null;
+  otherSymptoms: string | null;
+  createdAt: string;
+}
+
+export async function fetchVitalRecords(patientHn: string): Promise<VitalRecord[]> {
+  const response = await fetch(`/api/patients/${patientHn}/vitals`)
+
+  if (!response.ok) {
+    throw new Error(`Unable to load vital records (${response.status})`)
+  }
+
+  return response.json() as Promise<VitalRecord[]>
+}
+
 export async function createVitalRecord(
   patientHn: string,
   input: CreateVitalRecordInput,

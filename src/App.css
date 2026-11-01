@@ -33,6 +33,137 @@ h2 {
   box-shadow: 0 12px 32px rgb(15 23 42 / 0.06);
 }
 
+.patient-detail-page h1 {
+  margin-bottom: 0;
+}
+
+.back-link,
+.patient-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font: inherit;
+  cursor: pointer;
+}
+
+.back-link {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.patient-link {
+  font-weight: 600;
+}
+
+.patient-link:hover,
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.detail-toolbar,
+.detail-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.detail-toolbar {
+  margin-bottom: 20px;
+}
+
+.patient-select {
+  width: min(360px, 100%);
+}
+
+.detail-filter-row {
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.filter-label {
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.detail-filter-row .react-datepicker-wrapper,
+.detail-filter-row .react-datepicker__input-container {
+  width: 260px;
+}
+
+.detail-filter-row .react-datepicker__input-container input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.summary-card p {
+  margin-bottom: 10px;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.summary-card strong {
+  display: block;
+  color: #0f172a;
+  font-size: 1.35rem;
+}
+
+.summary-card span {
+  display: block;
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.chart-card:last-child {
+  grid-column: 1 / -1;
+}
+
+.chart-card h2 {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.detail-table-card {
+  margin-bottom: 24px;
+}
+
 .page-placeholder {
   padding: 32px;
   border: 1px solid #e2e8f0;
@@ -61,6 +192,38 @@ h2 {
   font-size: 0.875rem;
   font-weight: 700;
   text-align: center;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 24px 20px;
+}
+
+.search-field {
+  display: grid;
+  gap: 6px;
+  width: min(360px, 100%);
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.search-field input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  font: inherit;
+  font-weight: 400;
+}
+
+.table-meta {
+  color: #64748b;
+  font-size: 0.85rem;
 }
 
 .state-message {
@@ -247,6 +410,37 @@ h2 {
   overflow-x: auto;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.pagination-button {
+  padding: 7px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination-button:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -287,7 +481,45 @@ tbody tr:hover {
     padding-right: 16px;
   }
 
+  .table-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  .pagination {
+    justify-content: center;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .detail-toolbar,
+  .detail-filter-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .patient-select,
+  .detail-filter-row .react-datepicker-wrapper,
+  .detail-filter-row .react-datepicker__input-container {
+    width: 100%;
+  }
+
+  .summary-grid,
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card:last-child {
+    grid-column: auto;
   }
 }

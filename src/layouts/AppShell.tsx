@@ -1,34 +1,31 @@
 import type { ReactNode } from 'react'
+import { NavLink, Link } from 'react-router-dom'
 import { branding } from '../config/branding'
 import './AppShell.css'
 
-export type AppPage = 'dashboard' | 'patients'
-
 interface AppShellProps {
-  activePage: AppPage
   children: ReactNode
-  onNavigate: (page: AppPage) => void
 }
 
-export function AppShell({ activePage, children, onNavigate }: AppShellProps) {
+export function AppShell({ children }: AppShellProps) {
   return (
     <div className="app-layout">
       <header className="app-header">
-        <button type="button" className="brand-button" onClick={() => onNavigate('dashboard')} aria-label="Go to dashboard">
+        <Link to="/dashboard" className="brand-button" aria-label="Go to dashboard">
           <img src={branding.logoPath} alt="" className="brand-logo" />
           <span>
             <span className="eyebrow">{branding.applicationName}</span>
             <span className="brand-name">{branding.clinicName}</span>
           </span>
-        </button>
+        </Link>
 
         <nav className="top-nav" aria-label="Main navigation">
-          <button type="button" className={activePage === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('dashboard')} aria-current={activePage === 'dashboard' ? 'page' : undefined}>
+          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             Dashboard
-          </button>
-          <button type="button" className={activePage === 'patients' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('patients')} aria-current={activePage === 'patients' ? 'page' : undefined}>
+          </NavLink>
+          <NavLink to="/patients" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             Patients
-          </button>
+          </NavLink>
         </nav>
       </header>
 
