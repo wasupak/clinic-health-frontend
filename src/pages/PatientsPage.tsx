@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { fetchPatients, type Patient } from '../api/patients'
+import { VitalRecordForm } from '../components/VitalRecordForm'
 
 export function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
 
   useEffect(() => {
     fetchPatients()
@@ -52,6 +54,7 @@ export function PatientsPage() {
                 <th scope="col">Name</th>
                 <th scope="col">Date of birth</th>
                 <th scope="col">Gender</th>
+                <th scope="col"><span className="visually-hidden">Actions</span></th>
               </tr>
             </thead>
             <tbody>
@@ -61,11 +64,24 @@ export function PatientsPage() {
                   <td>{formatPatientName(patient)}</td>
                   <td>{formatDate(patient.dateOfBirth)}</td>
                   <td>{patient.gender ?? '—'}</td>
+                  <td className="action-cell">
+                    <button type="button" className="add-vital-button" onClick={() => setSelectedPatient(patient)} aria-label={`Add vital record for ${formatPatientName(patient)}`}>
+                      +
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {selectedPatient && (
+        <VitalRecordForm
+          patient={selectedPatient}
+          onCancel={() => setSelectedPatient(null)}
+          onCreated={() => setSelectedPatient(null)}
+        />
       )}
     </section>
   )
