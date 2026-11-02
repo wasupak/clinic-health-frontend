@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { format, subDays } from 'date-fns'
 import { th } from 'date-fns/locale/th'
+import { toPng } from 'html-to-image'
 import { useNavigate, useParams } from 'react-router-dom'
 import Select from 'react-select'
 import { fetchPatients, type Patient } from '../api/patients'
@@ -36,6 +37,10 @@ export function PatientDetailPage() {
     subDays(new Date(), 29),
     new Date(),
   ])
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isExporting, setIsExporting] = useState(false)
+  const [shareError, setShareError] = useState<string | null>(null)
+  const reportRef = useRef<HTMLElement | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -103,8 +108,65 @@ export function PatientDetailPage() {
     output: toNumber(record.urineOutputMl),
   }))
 
+  const exportSummaryImage = async () => {
+    if (!reportRef.current) return
+
+    setIsExporting(true)
+    await new Promise((resolve) => requestAnimationFrame(resolve))
+
+    try {
+      const dataUrl = await toPng(reportRef.current, {
+        cacheBust: true,
+        pixelRatio: 1.5,
+        backgroundColor: '#f8fafc',
+      })
+      setPreviewUrl(dataUrl)
+    } catch {
+      setError('Unable to create PNG preview')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const downloadPreview = () => {
+    if (!previewUrl) return
+
+    const link = document.createElement('a')
+    link.download = `patient-${patientHn}-summary.png`
+    link.href = previewUrl
+    link.click()
+  }
+
+  const sharePreview = async () => {
+    if (!previewUrl || !navigator.share) {
+      setShareError('This browser does not support image sharing. Use Download PNG instead.')
+      return
+    }
+
+    try {
+      const response = await fetch(previewUrl)
+      const blob = await response.blob()
+      const file = new File([blob], `patient-${patientHn}-summary.png`, { type: 'image/png' })
+
+      if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+        setShareError('This browser cannot share image files. Use Download PNG instead.')
+        return
+      }
+
+      await navigator.share({
+        title: `Patient ${patientHn} summary`,
+        files: [file],
+      })
+    } catch (shareRequestError: unknown) {
+      if (shareRequestError instanceof DOMException && shareRequestError.name === 'AbortError') return
+      setShareError('Unable to share this image. Use Download PNG instead.')
+    }
+  }
+
+  const formattedRange = `${range[0] ? format(range[0], 'dd/MM/yyyy') : 'All'} - ${range[1] ? format(range[1], 'dd/MM/yyyy') : 'dates'}`
+
   return (
-    <section className="patient-detail-page">
+    <section ref={reportRef} className={`patient-detail-page export-image-area${isExporting ? ' exporting' : ''}`}>
       <button type="button" className="back-link" onClick={() => navigate('/patients')}>
         ← Back to patients
       </button>
@@ -114,15 +176,22 @@ export function PatientDetailPage() {
           <p className="eyebrow">Patient health profile</p>
           <h1>{patient ? `${patient.firstName ?? ''} ${patient.lastName ?? ''}`.trim() : patientHn}</h1>
         </div>
-        <Select
-          className="patient-select"
-          value={selectedOption}
-          options={patients.map((item) => ({ value: item.patientHn, label: `${item.patientHn} - ${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() }))}
-          onChange={(option) => option && navigate(`/patients/${option.value}`)}
-          placeholder="Select patient..."
-          isSearchable
-        />
+        <div className="detail-actions export-controls">
+          <Select
+            className="patient-select"
+            value={selectedOption}
+            options={patients.map((item) => ({ value: item.patientHn, label: `${item.patientHn} - ${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() }))}
+            onChange={(option) => option && navigate(`/patients/${option.value}`)}
+            placeholder="Select patient..."
+            isSearchable
+          />
+          <button type="button" className="button primary" onClick={exportSummaryImage} disabled={isExporting}>
+            {isExporting ? 'Preparing…' : 'Export PNG'}
+          </button>
+        </div>
       </div>
+
+      <p className="export-only export-date-range">Recorded date range: {formattedRange}</p>
 
       <div className="detail-filter-row">
         <span className="filter-label">Recorded date range</span>
@@ -210,7 +279,7 @@ export function PatientDetailPage() {
                     <tr><th>Recorded date</th><th>Weight</th><th>BP</th><th>Pulse</th><th>Fluid intake</th><th>Urine output</th></tr>
                   </thead>
                   <tbody>
-                    {chartRecords.map((record) => (
+                    {orderedRecords.map((record) => (
                       <tr key={record.id}>
                         <td>{format(new Date(record.recordedAt), 'dd/MM/yyyy')}</td>
                         <td>{toNumber(record.weightKg)?.toFixed(1) ?? '—'}</td>
@@ -226,6 +295,29 @@ export function PatientDetailPage() {
             )}
           </div>
         </>
+      )}
+
+      {previewUrl && (
+        <div className="modal-backdrop" role="presentation">
+          <section className="export-preview-modal" role="dialog" aria-modal="true" aria-labelledby="export-preview-heading">
+            <div className="modal-heading">
+              <div>
+                <p className="eyebrow">Patient report</p>
+                <h2 id="export-preview-heading">PNG preview</h2>
+              </div>
+              <button type="button" className="icon-button" onClick={() => setPreviewUrl(null)} aria-label="Close preview">×</button>
+            </div>
+            <div className="export-preview-image-wrap">
+              <img src={previewUrl} alt={`Patient ${patientHn} report preview`} className="export-preview-image" />
+            </div>
+            <div className="form-actions">
+              <button type="button" className="button secondary" onClick={() => setPreviewUrl(null)}>Cancel</button>
+              <button type="button" className="button secondary" onClick={sharePreview}>Share</button>
+              <button type="button" className="button primary" onClick={downloadPreview}>Download PNG</button>
+            </div>
+            {shareError && <p className="form-error" role="alert">{shareError}</p>}
+          </section>
+        </div>
       )}
     </section>
   )
