@@ -7,8 +7,10 @@ import { th } from 'date-fns/locale/th'
 import { toPng } from 'html-to-image'
 import { useNavigate, useParams } from 'react-router-dom'
 import Select from 'react-select'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fetchPatients, type Patient } from '../api/patients'
 import { fetchVitalRecords, type VitalRecord } from '../api/vitals'
+import { icons } from '../config/icons'
 import {
   Bar,
   BarChart,
@@ -168,7 +170,8 @@ export function PatientDetailPage() {
   return (
     <section ref={reportRef} className={`patient-detail-page export-image-area${isExporting ? ' exporting' : ''}`}>
       <button type="button" className="back-link" onClick={() => navigate('/patients')}>
-        ← Back to patients
+        <FontAwesomeIcon icon={icons.back} aria-hidden="true" />
+        Back to patients
       </button>
 
       <div className="detail-toolbar">
@@ -184,8 +187,10 @@ export function PatientDetailPage() {
             onChange={(option) => option && navigate(`/patients/${option.value}`)}
             placeholder="Select patient..."
             isSearchable
+            classNamePrefix="patient-select"
           />
           <button type="button" className="button primary" onClick={exportSummaryImage} disabled={isExporting}>
+            <FontAwesomeIcon icon={icons.exportImage} aria-hidden="true" />
             {isExporting ? 'Preparing…' : 'Export PNG'}
           </button>
         </div>
@@ -305,15 +310,15 @@ export function PatientDetailPage() {
                 <p className="eyebrow">Patient report</p>
                 <h2 id="export-preview-heading">PNG preview</h2>
               </div>
-              <button type="button" className="icon-button" onClick={() => setPreviewUrl(null)} aria-label="Close preview">×</button>
+              <button type="button" className="icon-button" onClick={() => setPreviewUrl(null)} aria-label="Close preview"><FontAwesomeIcon icon={icons.close} /></button>
             </div>
             <div className="export-preview-image-wrap">
               <img src={previewUrl} alt={`Patient ${patientHn} report preview`} className="export-preview-image" />
             </div>
             <div className="form-actions">
               <button type="button" className="button secondary" onClick={() => setPreviewUrl(null)}>Cancel</button>
-              <button type="button" className="button secondary" onClick={sharePreview}>Share</button>
-              <button type="button" className="button primary" onClick={downloadPreview}>Download PNG</button>
+              <button type="button" className="button secondary" onClick={sharePreview}><FontAwesomeIcon icon={icons.share} aria-hidden="true" />Share</button>
+              <button type="button" className="button primary" onClick={downloadPreview}><FontAwesomeIcon icon={icons.download} aria-hidden="true" />Download PNG</button>
             </div>
             {shareError && <p className="form-error" role="alert">{shareError}</p>}
           </section>

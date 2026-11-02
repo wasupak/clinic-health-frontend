@@ -60,6 +60,10 @@
   color: #1d4ed8;
 }
 
+.nav-link svg {
+  margin-right: 7px;
+}
+
 .app-content {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;

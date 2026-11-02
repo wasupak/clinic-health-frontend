@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fetchPatients, type Patient } from '../api/patients'
+import { PatientFormModal } from '../components/PatientFormModal'
+import { icons } from '../config/icons'
 import { VitalRecordForm } from '../components/VitalRecordForm'
 
 export function PatientsPage() {
@@ -12,6 +15,8 @@ export function PatientsPage() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null)
+  const [isPatientFormOpen, setIsPatientFormOpen] = useState(false)
 
   useEffect(() => {
     fetchPatients()
@@ -78,19 +83,23 @@ export function PatientsPage() {
           <p className="eyebrow">Patient management</p>
           <h1 id="patients-heading">Patients</h1>
         </div>
-        {!isLoading && !error && <span className="count-badge">{patients.length}</span>}
+        <div className="section-heading-actions">
+          {!isLoading && !error && <span className="count-badge">{patients.length}</span>}
+          <button type="button" className="button primary" onClick={() => { setEditingPatient(null); setIsPatientFormOpen(true) }}>
+            <FontAwesomeIcon icon={icons.addPatient} aria-hidden="true" />
+            Add patient
+          </button>
+        </div>
       </div>
 
       {!isLoading && !error && (
         <div className="table-toolbar">
           <label className="search-field">
             <span>Search name or HN</span>
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by name or patient HN"
-            />
+            <div className="search-input-wrapper">
+              <FontAwesomeIcon icon={icons.search} aria-hidden="true" />
+              <input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by name or patient HN" />
+            </div>
           </label>
           <span className="table-meta">
             {filteredPatients.length} of {patients.length} patients
@@ -120,14 +129,24 @@ export function PatientsPage() {
             <tbody>
               {paginatedPatients.map((patient) => (
                 <tr key={patient.id}>
-                  <td><button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{patient.patientHn}</button></td>
+                  <td>
+                    <div className="patient-hn-cell">
+                      <button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{patient.patientHn}</button>
+                      <button type="button" className="edit-inline-button" onClick={() => { setEditingPatient(patient); setIsPatientFormOpen(true) }} aria-label={`Edit patient ${patient.patientHn}`}>
+                        <FontAwesomeIcon icon={icons.edit} aria-hidden="true" />
+                      </button>
+                    </div>
+                  </td>
                   <td><button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{formatPatientName(patient)}</button></td>
                   <td>{calculateAge(patient.dateOfBirth)}</td>
                   <td>{patient.gender ?? '—'}</td>
                   <td className="action-cell">
-                    <button type="button" className="add-vital-button" onClick={() => setSelectedPatient(patient)} aria-label={`Add vital record for ${formatPatientName(patient)}`}>
-                      +
-                    </button>
+                    <div className="row-actions">
+                      <button type="button" className="add-vital-button" onClick={() => setSelectedPatient(patient)} aria-label={`Add vital record for ${formatPatientName(patient)}`}>
+                        <FontAwesomeIcon icon={icons.add} aria-hidden="true" />
+                        Add Vital
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -160,6 +179,21 @@ export function PatientsPage() {
           patient={selectedPatient}
           onCancel={() => setSelectedPatient(null)}
           onCreated={() => setSelectedPatient(null)}
+        />
+      )}
+
+      {isPatientFormOpen && (
+        <PatientFormModal
+          patient={editingPatient}
+          onCancel={() => setIsPatientFormOpen(false)}
+          onSaved={() => {
+            setIsPatientFormOpen(false)
+            fetchPatients().then(setPatients)
+          }}
+          onDeleted={() => {
+            setIsPatientFormOpen(false)
+            fetchPatients().then(setPatients)
+          }}
         />
       )}
     </section>

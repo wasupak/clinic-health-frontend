@@ -1,0 +1,31 @@
+import {
+  faArrowLeft,
+  faBoxArchive,
+  faDownload,
+  faFileImage,
+  faFloppyDisk,
+  faGaugeHigh,
+  faMagnifyingGlass,
+  faPen,
+  faPlus,
+  faShareNodes,
+  faUserPlus,
+  faUsers,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons'
+
+export const icons = {
+  dashboard: faGaugeHigh,
+  patients: faUsers,
+  addPatient: faUserPlus,
+  add: faPlus,
+  edit: faPen,
+  archive: faBoxArchive,
+  search: faMagnifyingGlass,
+  back: faArrowLeft,
+  exportImage: faFileImage,
+  share: faShareNodes,
+  download: faDownload,
+  save: faFloppyDisk,
+  close: faXmark,
+}

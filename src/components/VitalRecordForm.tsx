@@ -3,8 +3,10 @@ import DatePicker from 'react-datepicker'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale/th'
 import 'react-datepicker/dist/react-datepicker.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { createVitalRecord, type CreateVitalRecordInput } from '../api/vitals'
 import type { Patient } from '../api/patients'
+import { icons } from '../config/icons'
 
 interface VitalRecordFormProps {
   patient: Patient
@@ -66,7 +68,7 @@ export function VitalRecordForm({ patient, onCancel, onCreated }: VitalRecordFor
             <h2 id="vital-form-heading">Add vital record</h2>
           </div>
           <button type="button" className="icon-button" onClick={onCancel} aria-label="Close form">
-            ×
+            <FontAwesomeIcon icon={icons.close} />
           </button>
         </div>
 
@@ -129,6 +131,7 @@ export function VitalRecordForm({ patient, onCancel, onCreated }: VitalRecordFor
           <div className="form-actions">
             <button type="button" className="button secondary" onClick={onCancel} disabled={isSaving}>Cancel</button>
             <button type="submit" className="button primary" disabled={isSaving}>
+              <FontAwesomeIcon icon={icons.save} aria-hidden="true" />
               {isSaving ? 'Saving…' : 'Save vital'}
             </button>
           </div>

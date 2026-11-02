@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { NavLink, Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { branding } from '../config/branding'
+import { icons } from '../config/icons'
 import './AppShell.css'
 
 interface AppShellProps {
@@ -21,9 +23,11 @@ export function AppShell({ children }: AppShellProps) {
 
         <nav className="top-nav" aria-label="Main navigation">
           <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <FontAwesomeIcon icon={icons.dashboard} aria-hidden="true" />
             Dashboard
           </NavLink>
           <NavLink to="/patients" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            <FontAwesomeIcon icon={icons.patients} aria-hidden="true" />
             Patients
           </NavLink>
         </nav>
