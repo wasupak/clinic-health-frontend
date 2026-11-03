@@ -224,6 +224,13 @@ export function PatientDetailPage() {
             <SummaryCard label="Records" latest={`${filteredRecords.length}`} average={latest ? `Last: ${format(new Date(latest.recordedAt), 'dd/MM/yyyy')}` : '—'} />
           </div>
 
+          <div className="patient-info-grid" aria-label="Patient information">
+            <PatientInfoItem label="Doctor name" value={patient?.doctorName} />
+            <PatientInfoItem label="Diagnosis" value={patient?.diagnosis === 'ICM_Post_CBAG' ? 'ICM Post CBAG' : patient?.diagnosis} />
+            <PatientInfoItem label="Target BW" value={patient?.targetBw === null || patient?.targetBw === undefined ? null : `${patient.targetBw} kg`} />
+            <PatientInfoItem label="Lasix dose" value={patient?.doseLasix} />
+          </div>
+
           <div className="chart-grid">
             <ChartCard title="Vital Signs Trend">
               <ResponsiveContainer width="100%" height={280}>
@@ -330,6 +337,10 @@ export function PatientDetailPage() {
 
 function SummaryCard({ label, latest, average }: { label: string; latest: string; average: string }) {
   return <article className="summary-card"><p>{label}</p><strong>{latest}</strong><span>Average: {average}</span></article>
+}
+
+function PatientInfoItem({ label, value }: { label: string; value: string | null | undefined }) {
+  return <div className="patient-info-item"><span>{label}</span><strong>{value || '-'}</strong></div>
 }
 
 function ChartCard({ title, children }: { title: string; children: ReactNode }) {

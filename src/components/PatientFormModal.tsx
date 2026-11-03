@@ -1,10 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import DatePicker from 'react-datepicker'
 import { format } from 'date-fns'
 import { th } from 'date-fns/locale/th'
 import 'react-datepicker/dist/react-datepicker.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { createPatient, deletePatient, updatePatient, type Patient } from '../api/patients'
+import { createPatient, deletePatient, fetchDoctors, updatePatient, type Diagnosis, type Doctor, type Patient } from '../api/patients'
 import { icons } from '../config/icons'
 
 interface PatientFormModalProps {
@@ -28,9 +28,20 @@ export function PatientFormModal({ patient, onCancel, onSaved, onDeleted }: Pati
   const [lastName, setLastName] = useState(patient?.lastName ?? '')
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null)
   const [gender, setGender] = useState(patient?.gender ?? '')
+  const [doctorId, setDoctorId] = useState(patient?.doctorId ? String(patient.doctorId) : '')
+  const [diagnosis, setDiagnosis] = useState<Diagnosis | ''>(patient?.diagnosis ?? '')
+  const [targetBw, setTargetBw] = useState(patient?.targetBw ? String(patient.targetBw) : '')
+  const [doseLasix, setDoseLasix] = useState(patient?.doseLasix ?? '')
+  const [doctors, setDoctors] = useState<Doctor[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchDoctors()
+      .then(setDoctors)
+      .catch(() => setDoctors([]))
+  }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -43,6 +54,10 @@ export function PatientFormModal({ patient, onCancel, onSaved, onDeleted }: Pati
       lastName: lastName.trim() || null,
       dateOfBirth: dateOfBirth ? format(dateOfBirth, 'yyyy-MM-dd') : null,
       gender: gender || null,
+      doctorId: doctorId ? Number(doctorId) : null,
+      diagnosis: diagnosis || null,
+      targetBw: targetBw ? Number(targetBw) : null,
+      doseLasix: doseLasix.trim() || null,
     }
 
     try {
@@ -112,6 +127,32 @@ export function PatientFormModal({ patient, onCancel, onSaved, onDeleted }: Pati
               Last name
               <input value={lastName} onChange={(event) => setLastName(event.target.value)} />
             </label>
+            <label>
+              Doctor
+              <select value={doctorId} onChange={(event) => setDoctorId(event.target.value)}>
+                <option value="">Not specified</option>
+                {doctors.map((doctor) => (
+                  <option key={doctor.doctorId} value={doctor.doctorId}>{doctor.doctorName}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Diagnosis
+              <select value={diagnosis} onChange={(event) => setDiagnosis(event.target.value as Diagnosis | '')}>
+                <option value="">Not specified</option>
+                <option value="ICM">ICM</option>
+                <option value="DCM">DCM</option>
+                <option value="ICM_Post_CBAG">ICM Post CBAG</option>
+              </select>
+            </label>
+            <label>
+              Target BW
+              <input type="number" min="0" step="1" value={targetBw} onChange={(event) => setTargetBw(event.target.value)} />
+            </label>
+            <label>
+              Lasix dose
+              <input value={doseLasix} onChange={(event) => setDoseLasix(event.target.value)} maxLength={50} />
+            </label>            
             <label>
               Date of birth
               <DatePicker

@@ -178,7 +178,7 @@ export function PatientsPage() {
                 <th scope="col" aria-sort={sortKey === 'age' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('age')}>Age <span aria-hidden="true">{sortIndicator('age')}</span></button></th>
                 <th scope="col" aria-sort={sortKey === 'gender' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('gender')}>Gender <span aria-hidden="true">{sortIndicator('gender')}</span></button></th>
                 <th scope="col" aria-sort={sortKey === 'records' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('records')}>Records (30 days) <span aria-hidden="true">{sortIndicator('records')}</span></button></th>
-                <th scope="col"><span className="visually-hidden">Actions</span></th>
+                <th scope="col"><span aria-hidden="true">Vitals</span></th>
               </tr>
             </thead>
             <tbody>
@@ -189,18 +189,22 @@ export function PatientsPage() {
                       <button type="button" className="edit-inline-button" onClick={() => { setEditingPatient(patient); setIsPatientFormOpen(true) }} aria-label={`Edit patient ${patient.patientHn}`}>
                         <FontAwesomeIcon icon={icons.edit} aria-hidden="true" />
                       </button>
-                      <button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{patient.patientHn}</button>
+                      <button type="button" className="patient-link" onClick={() => { setEditingPatient(patient); setIsPatientFormOpen(true) }}>{patient.patientHn}</button>
                     </div>
                   </td>
-                  <td><button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{formatPatientName(patient)}</button></td>
+                  <td>{formatPatientName(patient)}</td>
                   <td>{calculateAge(patient.dateOfBirth)}</td>
                   <td>{patient.gender ?? '—'}</td>
                   <td className="records-count-cell">{patient.recordsCount}</td>
                   <td className="action-cell">
                     <div className="row-actions">
+                      <button type="button" className="patient-history-button" onClick={() => navigate(`/patients/${patient.patientHn}`)} aria-label={`View vital history for ${formatPatientName(patient)}`}>
+                        <FontAwesomeIcon icon={icons.info} aria-hidden="true" />
+                          History
+                      </button>
                       <button type="button" className="add-vital-button" onClick={() => setSelectedPatient(patient)} aria-label={`Add vital record for ${formatPatientName(patient)}`}>
                         <FontAwesomeIcon icon={icons.add} aria-hidden="true" />
-                        Add Vital
+                        Add
                       </button>
                     </div>
                   </td>

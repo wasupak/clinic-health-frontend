@@ -82,7 +82,8 @@ h2 {
   cursor: pointer;
 }
 
-.edit-inline-button:hover {
+.edit-inline-button:hover,
+.edit-inline-button:focus-visible {
   background: #bfdbfe;
 }
 
@@ -218,6 +219,43 @@ h2 {
 
 .export-only {
   display: none;
+}
+
+.patient-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.patient-info-item {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.patient-info-item span,
+.patient-info-item strong {
+  display: block;
+}
+
+.patient-info-item span {
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.patient-info-item strong {
+  overflow: hidden;
+  color: #1e293b;
+  font-size: 0.95rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .export-image-area.exporting {
@@ -377,7 +415,7 @@ h2 {
 }
 
 .action-cell {
-  min-width: 120px;
+  min-width: 220px;
   white-space: nowrap;
 }
 
@@ -395,6 +433,7 @@ h2 {
 }
 
 .add-vital-button,
+.patient-history-button,
 .icon-button,
 .edit-patient-button {
   border: 0;
@@ -404,6 +443,18 @@ h2 {
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+}
+
+.patient-history-button {
+  width: auto;
+  min-height: 32px;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.patient-history-button svg {
+  margin-right: 5px;
 }
 
 .add-vital-button {
@@ -419,6 +470,7 @@ h2 {
 }
 
 .add-vital-button:hover,
+.patient-history-button:hover,
 .icon-button:hover,
 .edit-patient-button:hover {
   background: #bfdbfe;
@@ -753,8 +805,13 @@ tbody tr:hover {
   }
 
   .summary-grid,
+  .patient-info-grid,
   .chart-grid {
     grid-template-columns: 1fr;
+  }
+
+  .patient-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .chart-card:last-child {

@@ -1,6 +1,7 @@
 import {
   faArrowLeft,
   faBoxArchive,
+  faClockRotateLeft,
   faDownload,
   faFileImage,
   faFloppyDisk,
@@ -21,6 +22,7 @@ export const icons = {
   add: faPlus,
   edit: faPen,
   archive: faBoxArchive,
+  info: faClockRotateLeft,
   search: faMagnifyingGlass,
   back: faArrowLeft,
   exportImage: faFileImage,

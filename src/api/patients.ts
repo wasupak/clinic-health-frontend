@@ -1,3 +1,5 @@
+export type Diagnosis = 'ICM' | 'DCM' | 'ICM_Post_CBAG'
+
 export interface Patient {
   id: number;
   patientHn: string;
@@ -6,6 +8,11 @@ export interface Patient {
   dateOfBirth: string | null;
   gender: string | null;
   isActive: boolean;
+  doctorId: number | null;
+  doctorName: string | null;
+  diagnosis: Diagnosis | null;
+  targetBw: number | null;
+  doseLasix: string | null;
   recordsCount: number;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +24,25 @@ export interface SavePatientInput {
   lastName?: string | null;
   dateOfBirth?: string | null;
   gender?: string | null;
+  doctorId?: number | null;
+  diagnosis?: Diagnosis | null;
+  targetBw?: number | null;
+  doseLasix?: string | null;
+}
+
+export interface Doctor {
+  doctorId: number;
+  doctorName: string;
+}
+
+export async function fetchDoctors(): Promise<Doctor[]> {
+  const response = await fetch('/api/doctors');
+
+  if (!response.ok) {
+    throw new Error(`Unable to load doctors (${response.status})`);
+  }
+
+  return response.json() as Promise<Doctor[]>;
 }
 
 export async function fetchPatients(): Promise<Patient[]> {
