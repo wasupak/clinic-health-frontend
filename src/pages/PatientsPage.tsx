@@ -6,6 +6,9 @@ import { PatientFormModal } from '../components/PatientFormModal'
 import { icons } from '../config/icons'
 import { VitalRecordForm } from '../components/VitalRecordForm'
 
+type SortKey = 'patientHn' | 'name' | 'age' | 'gender' | 'records'
+type SortDirection = 'asc' | 'desc'
+
 export function PatientsPage() {
   const navigate = useNavigate()
   const pageSize = 20
@@ -17,6 +20,8 @@ export function PatientsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null)
   const [isPatientFormOpen, setIsPatientFormOpen] = useState(false)
+  const [sortKey, setSortKey] = useState<SortKey>('patientHn')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   useEffect(() => {
     fetchPatients()
@@ -62,8 +67,57 @@ export function PatientsPage() {
     )
   }, [patients, searchTerm])
 
+  const sortedPatients = useMemo(() => {
+    const getSortValue = (patient: Patient): string | number | null => {
+      switch (sortKey) {
+        case 'patientHn':
+          return patient.patientHn
+        case 'name':
+          return formatPatientName(patient)
+        case 'age': {
+          const age = calculateAge(patient.dateOfBirth)
+          return age === '—' ? null : Number(age)
+        }
+        case 'gender':
+          return patient.gender ?? null
+        case 'records':
+          return patient.recordsCount
+      }
+    }
+
+    return [...filteredPatients].sort((firstPatient, secondPatient) => {
+      const firstValue = getSortValue(firstPatient)
+      const secondValue = getSortValue(secondPatient)
+
+      if (firstValue === null && secondValue === null) return 0
+      if (firstValue === null) return 1
+      if (secondValue === null) return -1
+
+      const comparison = typeof firstValue === 'number' && typeof secondValue === 'number'
+        ? firstValue - secondValue
+        : String(firstValue).localeCompare(String(secondValue), undefined, { numeric: true, sensitivity: 'base' })
+
+      return sortDirection === 'asc' ? comparison : -comparison
+    })
+  }, [filteredPatients, sortDirection, sortKey])
+
+  const handleSort = (nextSortKey: SortKey) => {
+    if (sortKey === nextSortKey) {
+      setSortDirection((direction) => direction === 'asc' ? 'desc' : 'asc')
+      return
+    }
+
+    setSortKey(nextSortKey)
+    setSortDirection('asc')
+  }
+
+  const sortIndicator = (column: SortKey) => {
+    if (sortKey !== column) return '↕'
+    return sortDirection === 'asc' ? '↑' : '↓'
+  }
+
   const totalPages = Math.max(1, Math.ceil(filteredPatients.length / pageSize))
-  const paginatedPatients = filteredPatients.slice(
+  const paginatedPatients = sortedPatients.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize,
   )
@@ -119,10 +173,11 @@ export function PatientsPage() {
           <table>
             <thead>
               <tr>
-                <th scope="col">Patient HN</th>
-                <th scope="col">Name</th>
-                <th scope="col">Age</th>
-                <th scope="col">Gender</th>
+                <th scope="col" aria-sort={sortKey === 'patientHn' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('patientHn')}>Patient HN <span aria-hidden="true">{sortIndicator('patientHn')}</span></button></th>
+                <th scope="col" aria-sort={sortKey === 'name' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('name')}>Name <span aria-hidden="true">{sortIndicator('name')}</span></button></th>
+                <th scope="col" aria-sort={sortKey === 'age' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('age')}>Age <span aria-hidden="true">{sortIndicator('age')}</span></button></th>
+                <th scope="col" aria-sort={sortKey === 'gender' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('gender')}>Gender <span aria-hidden="true">{sortIndicator('gender')}</span></button></th>
+                <th scope="col" aria-sort={sortKey === 'records' ? sortDirection === 'asc' ? 'ascending' : 'descending' : 'none'}><button type="button" className="sort-header-button" onClick={() => handleSort('records')}>Records (30 days) <span aria-hidden="true">{sortIndicator('records')}</span></button></th>
                 <th scope="col"><span className="visually-hidden">Actions</span></th>
               </tr>
             </thead>
@@ -131,15 +186,16 @@ export function PatientsPage() {
                 <tr key={patient.id}>
                   <td>
                     <div className="patient-hn-cell">
-                      <button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{patient.patientHn}</button>
                       <button type="button" className="edit-inline-button" onClick={() => { setEditingPatient(patient); setIsPatientFormOpen(true) }} aria-label={`Edit patient ${patient.patientHn}`}>
                         <FontAwesomeIcon icon={icons.edit} aria-hidden="true" />
                       </button>
+                      <button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{patient.patientHn}</button>
                     </div>
                   </td>
                   <td><button type="button" className="patient-link" onClick={() => navigate(`/patients/${patient.patientHn}`)}>{formatPatientName(patient)}</button></td>
                   <td>{calculateAge(patient.dateOfBirth)}</td>
                   <td>{patient.gender ?? '—'}</td>
+                  <td className="records-count-cell">{patient.recordsCount}</td>
                   <td className="action-cell">
                     <div className="row-actions">
                       <button type="button" className="add-vital-button" onClick={() => setSelectedPatient(patient)} aria-label={`Add vital record for ${formatPatientName(patient)}`}>
@@ -152,6 +208,7 @@ export function PatientsPage() {
               ))}
             </tbody>
           </table>
+          <p className="table-note">Records = vital records recorded during the last 30 days.</p>
           <div className="pagination" aria-label="Patient list pagination">
             <button
               type="button"
@@ -178,7 +235,10 @@ export function PatientsPage() {
         <VitalRecordForm
           patient={selectedPatient}
           onCancel={() => setSelectedPatient(null)}
-          onCreated={() => setSelectedPatient(null)}
+          onCreated={() => {
+            setSelectedPatient(null)
+            fetchPatients().then(setPatients)
+          }}
         />
       )}
 

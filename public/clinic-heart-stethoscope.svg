@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Clinic heart and stethoscope</title>
+  <desc id="desc">A red heart combined with a navy medical stethoscope</desc>
+
+  <path
+    d="M128 224 42 139C8 105 31 48 76 48c23 0 40 13 52 31 12-18 29-31 52-31 45 0 68 57 34 91l-86 85Z"
+    fill="#e53935"
+  />
+  <path
+    d="M128 224 42 139C8 105 31 48 76 48c23 0 40 13 52 31 12-18 29-31 52-31 45 0 68 57 34 91l-86 85Z"
+    fill="none"
+    stroke="#b91c1c"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M47 35v54c0 24 19 43 43 43h24c20 0 36-16 36-36V35"
+    fill="none"
+    stroke="#123b6d"
+    stroke-width="13"
+    stroke-linecap="round"
+  />
+  <path
+    d="M47 35v54c0 24 19 43 43 43h24c20 0 36-16 36-36V35"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="4"
+    stroke-linecap="round"
+    opacity=".9"
+  />
+  <circle cx="47" cy="31" r="15" fill="#123b6d" />
+  <circle cx="150" cy="31" r="15" fill="#123b6d" />
+
+  <path
+    d="M150 96v35c0 19 15 34 34 34h8"
+    fill="none"
+    stroke="#123b6d"
+    stroke-width="13"
+    stroke-linecap="round"
+  />
+  <circle cx="201" cy="165" r="25" fill="#123b6d" />
+  <circle cx="201" cy="165" r="15" fill="#f8fafc" />
+  <circle cx="201" cy="165" r="6" fill="#123b6d" />
+</svg>

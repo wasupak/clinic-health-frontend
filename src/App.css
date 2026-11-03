@@ -381,6 +381,12 @@ h2 {
   white-space: nowrap;
 }
 
+.records-count-cell {
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
 .row-actions {
   display: flex;
   align-items: center;
@@ -612,6 +618,12 @@ h2 {
   font-size: 0.875rem;
 }
 
+.table-note {
+  margin: 12px 24px 0;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
 .pagination-button {
   padding: 7px 11px;
   border: 1px solid #cbd5e1;
@@ -649,6 +661,25 @@ th {
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.sort-header-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.sort-header-button:hover,
+.sort-header-button:focus-visible {
+  color: #2563eb;
 }
 
 td {

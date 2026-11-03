@@ -6,6 +6,7 @@ export interface Patient {
   dateOfBirth: string | null;
   gender: string | null;
   isActive: boolean;
+  recordsCount: number;
   createdAt: string;
   updatedAt: string;
 }
