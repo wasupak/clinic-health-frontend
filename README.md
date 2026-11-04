@@ -24,6 +24,12 @@ This repository is a portfolio/demo project. It displays synthetic development d
 - React DatePicker
 - Font Awesome
 
+## Related repository
+
+This web app consumes the REST API provided by the companion backend repository:
+
+- Backend API: https://github.com/<your-github-username>/clinic-health-backend
+
 ## Requirements
 
 - Node.js 20+
@@ -47,6 +53,13 @@ pnpm dev
 The Vite development server proxies `/api` requests to `http://localhost:3000`.
 
 Open the URL shown by Vite, usually `http://localhost:5173`.
+
+For the complete local application:
+
+1. Start PostgreSQL.
+2. Start `clinic-health-backend` on port `3000`.
+3. Start this frontend repository.
+4. Open the URL shown by Vite.
 
 ## Build and checks
 
