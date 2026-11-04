@@ -28,7 +28,7 @@ This repository is a portfolio/demo project. It displays synthetic development d
 
 This web app consumes the REST API provided by the companion backend repository:
 
-- Backend API: https://github.com/<your-github-username>/clinic-health-backend
+- Backend API: https://github.com/wasupak/clinic-health-backend
 
 ## Requirements
 
