@@ -117,18 +117,16 @@ export function PatientsPage() {
   }
 
   const totalPages = Math.max(1, Math.ceil(filteredPatients.length / pageSize))
+  const displayedPage = Math.min(currentPage, totalPages)
   const paginatedPatients = sortedPatients.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
+    (displayedPage - 1) * pageSize,
+    displayedPage * pageSize,
   )
 
-  useEffect(() => {
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value)
     setCurrentPage(1)
-  }, [searchTerm])
-
-  useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages)
-  }, [currentPage, totalPages])
+  }
 
   return (
     <section className="content-card" aria-labelledby="patients-heading">
@@ -152,7 +150,7 @@ export function PatientsPage() {
             <span>Search name or HN</span>
             <div className="search-input-wrapper">
               <FontAwesomeIcon icon={icons.search} aria-hidden="true" />
-              <input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by name or patient HN" />
+              <input type="search" value={searchTerm} onChange={(event) => handleSearchChange(event.target.value)} placeholder="Search by name or patient HN" />
             </div>
           </label>
           <span className="table-meta">
@@ -217,17 +215,17 @@ export function PatientsPage() {
             <button
               type="button"
               className="pagination-button"
-              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(Math.max(1, displayedPage - 1))}
+              disabled={displayedPage === 1}
             >
               Previous
             </button>
-            <span>Page {currentPage} of {totalPages}</span>
+            <span>Page {displayedPage} of {totalPages}</span>
             <button
               type="button"
               className="pagination-button"
-              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(Math.min(totalPages, displayedPage + 1))}
+              disabled={displayedPage === totalPages}
             >
               Next
             </button>

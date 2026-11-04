@@ -55,13 +55,25 @@ export function PatientDetailPage() {
   useEffect(() => {
     if (!patientHn) return
 
-    setIsLoading(true)
+    let isCurrentRequest = true
+
     fetchVitalRecords(patientHn)
-      .then(setRecords)
+      .then((nextRecords) => {
+        if (!isCurrentRequest) return
+        setRecords(nextRecords)
+        setError(null)
+      })
       .catch((requestError: unknown) => {
+        if (!isCurrentRequest) return
         setError(requestError instanceof Error ? requestError.message : 'Unable to load vital records')
       })
-      .finally(() => setIsLoading(false))
+      .finally(() => {
+        if (isCurrentRequest) setIsLoading(false)
+      })
+
+    return () => {
+      isCurrentRequest = false
+    }
   }, [patientHn])
 
   const patient = patients.find((item) => item.patientHn === patientHn)

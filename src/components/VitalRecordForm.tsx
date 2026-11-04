@@ -82,7 +82,7 @@ export function VitalRecordForm({ patient, onCancel, onCreated }: VitalRecordFor
               Measurement date
               <DatePicker
                 selected={recordedAt}
-                onChange={(date) => date && setRecordedAt(date)}
+                onChange={(date: Date | null) => date && setRecordedAt(date)}
                 dateFormat="dd/MM/yyyy"
                 locale={th}
                 maxDate={new Date()}
